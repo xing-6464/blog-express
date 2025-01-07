@@ -2,6 +2,7 @@ var createError = require('http-errors')
 var express = require('express')
 var cookieParser = require('cookie-parser')
 var logger = require('morgan')
+const session = require('express-session')
 
 const blogRouter = require('./routes/blog')
 const userRouter = require('./routes/user')
@@ -16,7 +17,16 @@ app.use(logger('dev'))
 app.use(express.json())
 app.use(express.urlencoded({ extended: false }))
 app.use(cookieParser())
-// app.use(express.static(path.join(__dirname, 'public')))
+app.use(
+  session({
+    secret: 'Xing_6464#0',
+    cookie: {
+      // path: '/',      // 默认配置
+      // httpOnly: true, // 默认配置
+      maxAge: 24 * 60 * 60 * 1000, // 1 day
+    },
+  })
+)
 
 app.use('/api/blog', blogRouter)
 app.use('/api/user', userRouter)
