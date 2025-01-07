@@ -3,6 +3,7 @@ var express = require('express')
 var cookieParser = require('cookie-parser')
 var logger = require('morgan')
 const session = require('express-session')
+const { RedisStore } = require('connect-redis')
 
 const blogRouter = require('./routes/blog')
 const userRouter = require('./routes/user')
@@ -17,6 +18,10 @@ app.use(logger('dev'))
 app.use(express.json())
 app.use(express.urlencoded({ extended: false }))
 app.use(cookieParser())
+
+const redisClient = require('./db/redis')
+const sessionStore = new RedisStore({ client: redisClient })
+
 app.use(
   session({
     secret: 'Xing_6464#0',
@@ -25,6 +30,9 @@ app.use(
       // httpOnly: true, // 默认配置
       maxAge: 24 * 60 * 60 * 1000, // 1 day
     },
+    store: sessionStore,
+    resave: false,
+    saveUninitialized: false,
   })
 )
 
